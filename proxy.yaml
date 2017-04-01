@@ -1,0 +1,36 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: foo-proxy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: foo-proxy
+      labels:
+        app: foo-proxy
+    spec:
+      containers:
+      - name: proxy
+        image: ubuntu
+        env:
+        volumeMounts:
+        - name: certs
+          mountPath: /etc/secrets
+          #readOnly: true # leave readOnly out so we can create our symlink
+        - name: auth
+          mountPath: /etc/auth
+          readOnly: true
+
+        command: ["/bin/sh", "-c", "ln -s /etc/auth/htpasswd /etc/secrets/htpasswd && \
+                                    cat /etc/secrets/htpasswd > /var/log/secrets.txt && \
+                                    tail -f /var/log/secrets.txt"]
+
+      volumes:
+      - name: certs
+        secret:
+          secretName: test-cert
+      - name: auth
+        secret:
+          secretName: test-auth
