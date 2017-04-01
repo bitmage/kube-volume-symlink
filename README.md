@@ -8,6 +8,7 @@ Steps to reproduce:
 4. run `ls /etc/secrets`
 
 Expected: `htpasswd` should exist in `/etc/secrets`
+
 Actual: `htpasswd` does not exist in `/etc/secrets`
 
 Furthermore:
